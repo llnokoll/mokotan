@@ -13,10 +13,11 @@ class CreateWeightTable extends Migration
      */
     public function up()
     {
-        Schema::create('weight', function (Blueprint $table) {
+        Schema::create('weights', function (Blueprint $table) {
             $table->date('date');
             $table->unsignedInteger('id');
-            $table->unsignedInteger('weight');
+            $table->float('weight', 5, 2);
+            $table->float('fatper', 5, 2);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateWeightTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('weight');
+        Schema::dropIfExists('weights');
     }
 }
