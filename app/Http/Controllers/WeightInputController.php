@@ -18,8 +18,9 @@ class WeightInputController extends Controller
     // Get a weights list of login user
     // $weightlist = \App\Model\weight::all();
     $weightlist = \App\Model\weight::where('id', '1')->orderBy('date', 'ASC')->get();
+    $weightlist_rival = \App\Model\weight::where('id', '2')->orderBy('date', 'ASC')->get();
 
-    return view('weightinput1.index', compact('today','weightlist'));
+    return view('weightinput1.index', compact('today','weightlist','weightlist_rival'));
 
   }
 
@@ -31,8 +32,9 @@ class WeightInputController extends Controller
     // Get a weights list of login user
     // $weightlist = \App\Model\weight::all();
     $weightlist = \App\Model\weight::where('id', '2')->orderBy('date', 'ASC')->get();
+    $weightlist_rival = \App\Model\weight::where('id', '1')->orderBy('date', 'ASC')->get();
 
-    return view('weightinput2.index', compact('today','weightlist'));
+    return view('weightinput2.index', compact('today','weightlist','weightlist_rival'));
 
   }
 
@@ -62,6 +64,7 @@ class WeightInputController extends Controller
     $savedata->save();
 
     $weightlist = \App\Model\weight::where('id', '1')->orderBy('date', 'ASC')->get();
+    $weightlist_rival = \App\Model\weight::where('id', '2')->orderBy('date', 'ASC')->get();
   return redirect()->action('WeightInputController@weightinput1');
 
   }
@@ -81,6 +84,7 @@ class WeightInputController extends Controller
 
     //$weightlist = \App\Model\weight::all();
     $weightlist = \App\Model\weight::where('id', '2')->orderBy('date', 'ASC')->get();
+    $weightlist_rival = \App\Model\weight::where('id', '1')->orderBy('date', 'ASC')->get();
   return redirect()->action('WeightInputController@weightinput2');
 
   }

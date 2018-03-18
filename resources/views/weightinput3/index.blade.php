@@ -1,4 +1,5 @@
 <form method="POST" action="{{url('weight/output3')}}">
+  <h4>HAMA</h4>
   date : <input type="text" name="date" value="<?php echo $today; ?>">
   weight : <input type="text" name="weight">
   fatper : <input type="text" name="fatper">
