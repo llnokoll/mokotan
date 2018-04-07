@@ -18,6 +18,7 @@ class CreatePersonalTable extends Migration
             $table->string('name');
             $table->unsignedInteger('age');
             $table->unsignedInteger('height');
+            $table->unsignedInteger('rival');
             $table->timestamps();
         });
     }

@@ -18,6 +18,7 @@ class CreateWeightTable extends Migration
             $table->unsignedInteger('id');
             $table->float('weight', 5, 2);
             $table->float('fatper', 5, 2);
+            $table->string('comment', 100);
             $table->timestamps();
         });
     }

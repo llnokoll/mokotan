@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 
 use Request;
 use Carbon\Carbon;
+use App\Model\weight;
 
 class WeightInputController extends Controller
 {
@@ -16,9 +17,9 @@ class WeightInputController extends Controller
     $today = Carbon::now()->today()->format('Y/m/d');
 
     // Get a weights list of login user
-    // $weightlist = \App\Model\weight::all();
-    $weightlist = \App\Model\weight::where('id', '1')->orderBy('date', 'ASC')->get();
-    $weightlist_rival = \App\Model\weight::where('id', '2')->orderBy('date', 'ASC')->get();
+    // $weightlist = weight::all();
+    $weightlist = weight::where('id', '1')->orderBy('date', 'ASC')->get();
+    $weightlist_rival = weight::where('id', '2')->orderBy('date', 'ASC')->get();
 
     return view('weightinput1.index', compact('today','weightlist','weightlist_rival'));
 
@@ -30,9 +31,9 @@ class WeightInputController extends Controller
     $today = Carbon::now()->today()->format('Y/m/d');
 
     // Get a weights list of login user
-    // $weightlist = \App\Model\weight::all();
-    $weightlist = \App\Model\weight::where('id', '2')->orderBy('date', 'ASC')->get();
-    $weightlist_rival = \App\Model\weight::where('id', '1')->orderBy('date', 'ASC')->get();
+    // $weightlist = weight::all();
+    $weightlist = weight::where('id', '2')->orderBy('date', 'ASC')->get();
+    $weightlist_rival = weight::where('id', '1')->orderBy('date', 'ASC')->get();
 
     return view('weightinput2.index', compact('today','weightlist','weightlist_rival'));
 
@@ -44,7 +45,7 @@ class WeightInputController extends Controller
     $today = Carbon::now()->today()->format('Y/m/d');
 
     // Get a weights list of login user
-    $weightlist = \App\Model\weight::where('id', '3')->orderBy('date', 'ASC')->get();
+    $weightlist = weight::where('id', '3')->orderBy('date', 'ASC')->get();
 
     return view('weightinput3.index', compact('today','weightlist'));
 
@@ -56,15 +57,30 @@ class WeightInputController extends Controller
     $weight = Request::input('weight');
     $date = Request::input('date');
     $fatper = Request::input('fatper');
-    $savedata = \App\Model\weight::updateOrCreate(
-      ['date' => $date, 'id' => 1],
-      ['weight' => $weight, 'fatper' => $fatper]
-    );
+    $comment = Request::input('comment');
+    $savedata = weight::find(1);
+    $savedata = weight::where('date', $date)
+                        ->where('id', 1)
+                        ->first();
+    if (!empty($savedata)) {
+      weight::where('date', $date)
+                ->where('id', '1')
+                ->update(['weight' => $weight, 'fatper' => $fatper, 'comment' => $comment]);
+    }
+    else {
+      $savedata = new weight;
+      $savedata->id = 1 ;
+      $savedata->date = $date;
+      $savedata->weight = $weight;
+      $savedata->fatper = $fatper;
+      $savedata->comment = $comment;
+
+    }
 
     $savedata->save();
 
-    $weightlist = \App\Model\weight::where('id', '1')->orderBy('date', 'ASC')->get();
-    $weightlist_rival = \App\Model\weight::where('id', '2')->orderBy('date', 'ASC')->get();
+    $weightlist = weight::where('id', '1')->orderBy('date', 'ASC')->get();
+    $weightlist_rival = weight::where('id', '2')->orderBy('date', 'ASC')->get();
   return redirect()->action('WeightInputController@weightinput1');
 
   }
@@ -75,16 +91,31 @@ class WeightInputController extends Controller
     $weight = Request::input('weight');
     $date = Request::input('date');
     $fatper = Request::input('fatper');
-    $savedata = \App\Model\weight::updateOrCreate(
-      ['date' => $date, 'id' => 2],
-      ['weight' => $weight, 'fatper' => $fatper]
-    );
+    $comment = Request::input('comment');
+    $savedata = weight::find(1);
+    $savedata = weight::where('date', $date)
+                        ->where('id', 2)
+                        ->first();
+    if (!empty($savedata)) {
+      weight::where('date', $date)
+                ->where('id', '2')
+                ->update(['weight' => $weight, 'fatper' => $fatper, 'comment' => $comment]);
+    }
+    else {
+      $savedata = new weight;
+      $savedata->id = 2 ;
+      $savedata->date = $date;
+      $savedata->weight = $weight;
+      $savedata->fatper = $fatper;
+      $savedata->comment = $comment;
+    
+    }
 
     $savedata->save();
 
-    //$weightlist = \App\Model\weight::all();
-    $weightlist = \App\Model\weight::where('id', '2')->orderBy('date', 'ASC')->get();
-    $weightlist_rival = \App\Model\weight::where('id', '1')->orderBy('date', 'ASC')->get();
+    //$weightlist = weight::all();
+    $weightlist = weight::where('id', '2')->orderBy('date', 'ASC')->get();
+    $weightlist_rival = weight::where('id', '1')->orderBy('date', 'ASC')->get();
   return redirect()->action('WeightInputController@weightinput2');
 
   }
@@ -95,14 +126,14 @@ class WeightInputController extends Controller
     $weight = Request::input('weight');
     $date = Request::input('date');
     $fatper = Request::input('fatper');
-    $savedata = \App\Model\weight::updateOrCreate(
+    $savedata = weight::updateOrCreate(
       ['date' => $date, 'id' => 3],
       ['weight' => $weight, 'fatper' => $fatper]
     );
 
     $savedata->save();
 
-    $weightlist = \App\Model\weight::where('id', '3')->orderBy('date', 'ASC')->get();
+    $weightlist = weight::where('id', '3')->orderBy('date', 'ASC')->get();
   return redirect()->action('WeightInputController@weightinput3');
 
   }
