@@ -8,68 +8,60 @@ namespace App\Http\Controllers;
 use Request;
 use Carbon\Carbon;
 use App\Model\weight;
+use Illuminate\Support\Facades\DB;
+use App\Http\Component\Exfunction;
+use App\Http\Component;
 
 class WeightInputController extends Controller
 {
-  public function weightinput1()
+  public function weightinput($uid)
   {
     // Get date that input weight data of user
     $today = Carbon::now()->today()->format('Y/m/d');
+
+    // Get uid
+    $accessUserData = DB::table('personal')->where('uri', $uid)->first();
+    $rivalUserData  = DB::table('personal')->where('id', $accessUserData->rival_id)->first();
 
     // Get a weights list of login user
     // $weightlist = weight::all();
-    $weightlist = weight::where('id', '1')->orderBy('date', 'ASC')->get();
-    $weightlist_rival = weight::where('id', '2')->orderBy('date', 'ASC')->get();
+    $weightlist = weight::where('id', $accessUserData->id)->orderBy('date', 'ASC')->get();
+    $weightlist_rival = weight::where('id', $rivalUserData->id)->orderBy('date', 'ASC')->get();
 
-    return view('weightinput1.index', compact('today','weightlist','weightlist_rival'));
+Request::session()->put('sUid',$uid);
 
-  }
-
-  public function weightinput2()
-  {
-    // Get date that input weight data of user
-    $today = Carbon::now()->today()->format('Y/m/d');
-
-    // Get a weights list of login user
-    // $weightlist = weight::all();
-    $weightlist = weight::where('id', '2')->orderBy('date', 'ASC')->get();
-    $weightlist_rival = weight::where('id', '1')->orderBy('date', 'ASC')->get();
-
-    return view('weightinput2.index', compact('today','weightlist','weightlist_rival'));
+    // return view('weightinput.index', compact('today','weightlist','weightlist_rival'));
+    return view('weightinput.index')->with([
+      "today" => $today,
+      "weightlist" => $weightlist,
+      "weightlist_rival" => $weightlist_rival,
+      "accessUserData" => $accessUserData,
+      "rivalUserData" => $rivalUserData,
+      ]);
 
   }
 
-  public function weightinput3()
-  {
-    // Get date that input weight data of user
-    $today = Carbon::now()->today()->format('Y/m/d');
-
-    // Get a weights list of login user
-    $weightlist = weight::where('id', '3')->orderBy('date', 'ASC')->get();
-
-    return view('weightinput3.index', compact('today','weightlist'));
-
-  }
-
-  public function weightoutput1()
+  public function weightoutput()
   {
     //test
     $weight = Request::input('weight');
     $date = Request::input('date');
     $fatper = Request::input('fatper');
     $comment = Request::input('comment');
+    $id = Request::input('id');
+    $rival_id = Request::input('rival_id');
     $savedata = weight::find(1);
     $savedata = weight::where('date', $date)
-                        ->where('id', 1)
+                        ->where('id', $id)
                         ->first();
     if (!empty($savedata)) {
       weight::where('date', $date)
-                ->where('id', '1')
+                ->where('id', $id)
                 ->update(['weight' => $weight, 'fatper' => $fatper, 'comment' => $comment]);
     }
     else {
       $savedata = new weight;
-      $savedata->id = 1 ;
+      $savedata->id = $id ;
       $savedata->date = $date;
       $savedata->weight = $weight;
       $savedata->fatper = $fatper;
@@ -77,64 +69,27 @@ class WeightInputController extends Controller
 
     }
 
-    $savedata->save();
-
-    $weightlist = weight::where('id', '1')->orderBy('date', 'ASC')->get();
-    $weightlist_rival = weight::where('id', '2')->orderBy('date', 'ASC')->get();
-  return redirect()->action('WeightInputController@weightinput1');
-
-  }
-
-  public function weightoutput2()
-  {
-    //test
-    $weight = Request::input('weight');
-    $date = Request::input('date');
-    $fatper = Request::input('fatper');
-    $comment = Request::input('comment');
-    $savedata = weight::find(1);
-    $savedata = weight::where('date', $date)
-                        ->where('id', 2)
-                        ->first();
-    if (!empty($savedata)) {
-      weight::where('date', $date)
-                ->where('id', '2')
-                ->update(['weight' => $weight, 'fatper' => $fatper, 'comment' => $comment]);
-    }
-    else {
-      $savedata = new weight;
-      $savedata->id = 2 ;
-      $savedata->date = $date;
-      $savedata->weight = $weight;
-      $savedata->fatper = $fatper;
-      $savedata->comment = $comment;
-    
-    }
+    // Get uname
+    $accessUserData = DB::table('personal')->where('id', $savedata->id)->first();
 
     $savedata->save();
 
-    //$weightlist = weight::all();
-    $weightlist = weight::where('id', '2')->orderBy('date', 'ASC')->get();
-    $weightlist_rival = weight::where('id', '1')->orderBy('date', 'ASC')->get();
-  return redirect()->action('WeightInputController@weightinput2');
+    // send messages to line
+    $wic = new Exfunction();
+    $wic->post_message("
+       name:$accessUserData->name
+       date:$savedata->date
+       weight:$savedata->weight
+       fatper:$savedata->fatper
+       comment:$savedata->comment"
+       );
 
-  }
+    $weightlist = weight::where('id', $id)->orderBy('date', 'ASC')->get();
+    $weightlist_rival = weight::where('id', $rival_id)->orderBy('date', 'ASC')->get();
 
-  public function weightoutput3()
-  {
-    //test
-    $weight = Request::input('weight');
-    $date = Request::input('date');
-    $fatper = Request::input('fatper');
-    $savedata = weight::updateOrCreate(
-      ['date' => $date, 'id' => 3],
-      ['weight' => $weight, 'fatper' => $fatper]
-    );
-
-    $savedata->save();
-
-    $weightlist = weight::where('id', '3')->orderBy('date', 'ASC')->get();
-  return redirect()->action('WeightInputController@weightinput3');
+$sUid = Request::session()->get('sUid');
+return redirect("weight/$sUid/input");
+//  return redirect()->action('WeightInputController@weightinput');
 
   }
 }

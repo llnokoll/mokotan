@@ -15,12 +15,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/hello', 'HelloController@hello');
-Route::get('/weight/84937593/input', 'WeightInputController@weightinput1');
-Route::get('/weight/7583750503/input', 'WeightInputController@weightinput2');
-Route::get('/weight/73820575/input', 'WeightInputController@weightinput3');
-Route::post('/weight/output1', 'WeightInputController@weightoutput1');
-Route::post('/weight/output2', 'WeightInputController@weightoutput2');
-Route::post('/weight/output3', 'WeightInputController@weightoutput3');
+//84937593
+//7583750503
+//73820575
+Route::get('/weight/{uid}/input', 'WeightInputController@weightinput');
+Route::post('/weight/output', 'WeightInputController@weightoutput');
 
 Auth::routes();
 
