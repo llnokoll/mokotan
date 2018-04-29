@@ -18,15 +18,35 @@ class WeightInputController extends Controller
   {
     // Get date that input weight data of user
     $today = Carbon::now()->today()->format('Y/m/d');
+    $tblPersonal = DB::table('personal');
+    $tblWeight = DB::table('weights AS w1');
 
     // Get uid
-    $accessUserData = DB::table('personal')->where('uri', $uid)->first();
-    $rivalUserData  = DB::table('personal')->where('id', $accessUserData->rival_id)->first();
+    $accessUserData = $tblPersonal->where('uri', $uid)->first();
+    $rivalUserData  = $tblPersonal->where('id', $accessUserData->rival_id)->first();
+dd($accessUserData);
 
     // Get a weights list of login user
-    // $weightlist = weight::all();
+    // $weightdate = $tblWeight->pluck('date');
+    // $sub_query = DB::select(DB::raw('SELECT date, weight WHERE id = $accessUserData->rival_id'));
+//    $result = DB::table('weights AS w1')
+ //           ->select('w1.date')
+  //          ->Join('weights AS w2', 'w1.date', '=', 'w2.date')
+   //         ->get();
+
+//$weightFirstUser = DB::table('weights')
+//                   ->where('weights.id', $accessUserData->id)
+ //                  ->join('weights', function ($join) {
+  //                   $join->where('weights.id', '=', $accessUserData->rival_id);
+   //                })
+    //               ->join('weights as w2', 'w1.date', '=', 'w2.date')
+     //              ->select('date', 'w1.weight','w2.weight')
+      //             ->get();
+
     $weightlist = weight::where('id', $accessUserData->id)->orderBy('date', 'ASC')->get();
+    $weightlistJson = json_encode($weightlist);
     $weightlist_rival = weight::where('id', $rivalUserData->id)->orderBy('date', 'ASC')->get();
+    $weightlist_rivalJson = json_encode($weightlist_rival);
 
 Request::session()->put('sUid',$uid);
 
@@ -34,6 +54,7 @@ Request::session()->put('sUid',$uid);
     return view('weightinput.index')->with([
       "today" => $today,
       "weightlist" => $weightlist,
+      "weightlistJson" => $weightlistJson,
       "weightlist_rival" => $weightlist_rival,
       "accessUserData" => $accessUserData,
       "rivalUserData" => $rivalUserData,
