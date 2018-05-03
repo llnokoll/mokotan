@@ -43,13 +43,17 @@ class WeightInputController extends Controller
     $result = array();
     $i = 0;
 
+    // display pre data when the data is not exist
+    $old_w1 = DB::table('weights')->where('id', $accessUserData->id)->max('weight');
+    $old_w2 = DB::table('weights')->where('id', $accessUserData->rival_id)->max('weight');
+
     foreach ( $weightdate as $datekey ){
 
       // userArray data
       $tmp_resultCheck = $UserArray[0]->contains('date','=',$datekey);
       $resultCheck = ( 'true' == $tmp_resultCheck ) ? 'true' : $UserArray[1]->contains('date','=',$datekey); // 二人分表示する場合
 //      $resultCheck = ( 'true' == $tmp_resultCheck ) ? 'true' : $UserArray[0]->contains('date','=',$datekey);
-      
+
       if($resultCheck == 'true') {
         $w1 = $UserArray[0]->where('date',$datekey)->pluck('weight')->toArray();
         $w2 = $UserArray[1]->where('date',$datekey)->pluck('weight')->toArray();
