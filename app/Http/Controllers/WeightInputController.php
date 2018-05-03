@@ -18,30 +18,36 @@ class WeightInputController extends Controller
   {
     // Get date that input weight data of user
     $today = Carbon::now()->today()->format('Y/m/d');
-    $tblPersonal = DB::table('personal');
-    $tblWeight = DB::table('weights AS w1');
+    // $tblPersonal = DB::table('personal');
 
     // Get uid
-    $accessUserData = $tblPersonal->where('uri', $uid)->first();
-    $rivalUserData  = $tblPersonal->where('id', $accessUserData->rival_id)->first();
-dd($accessUserData);
+    $accessUserData = DB::table('personal')->where('uri', $uid)->first();
+    $rivalUserData  = DB::table('personal')->where('id', $accessUserData->rival_id)->first();
 
     // Get a weights list of login user
-    // $weightdate = $tblWeight->pluck('date');
-    // $sub_query = DB::select(DB::raw('SELECT date, weight WHERE id = $accessUserData->rival_id'));
-//    $result = DB::table('weights AS w1')
- //           ->select('w1.date')
-  //          ->Join('weights AS w2', 'w1.date', '=', 'w2.date')
-   //         ->get();
+    $weightdate = DB::table('weights')->distinct()->pluck('date');
+    $weightFirstUser = DB::table('weights AS w1')
+                     ->where('w1.id', $accessUserData->id)
+                     ->select('date', 'w1.weight')
+                     ->get();
+    $weightSecondUser = DB::table('weights AS w1')
+                      ->where('w1.id', $accessUserData->rival_id)
+                      ->select('date', 'w1.weight AS weight2')
+                     ->get();
 
-//$weightFirstUser = DB::table('weights')
-//                   ->where('weights.id', $accessUserData->id)
- //                  ->join('weights', function ($join) {
-  //                   $join->where('weights.id', '=', $accessUserData->rival_id);
-   //                })
-    //               ->join('weights as w2', 'w1.date', '=', 'w2.date')
-     //              ->select('date', 'w1.weight','w2.weight')
-      //             ->get();
+    // Modify Associative array
+    $result = array();
+    $i = 0;
+    foreach ( $weightdate as $datekey ){
+      $resultCheck = $weightFirstUser->contains('date','=',$datekey);
+      if($resultCheck == 'true') {
+        $result[$i] = array(
+          'date'=>$datekey
+        );
+      }
+      $i++;
+    }
+    var_dump($result);
 
     $weightlist = weight::where('id', $accessUserData->id)->orderBy('date', 'ASC')->get();
     $weightlistJson = json_encode($weightlist);

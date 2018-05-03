@@ -17,7 +17,7 @@
   <input type="hidden" name="rival_id" value="{{ $rivalUserData->id}}">
 </form>
 
-<div id="chart" style="height: 200px;"></div>
+<div id="chart" style="height: 300px;"></div>
 
 <h5>{{ $accessUserData->name }} DATA</h5>
 <div class="container">
@@ -69,20 +69,20 @@
   new Morris.Line(
     {
       element: 'chart',
-      data:<?php echo $weightlistJson; ?>,
+      data: [
+        {"date":"2016-11-28","lineA":"128","lineB":"226"},
+        {"date":"2016-11-27","lineA":"128","lineB":"227"},
+        {"date":"2016-11-26","lineA":"127","lineB":"230"}
+      ],
       xkey: 'date',
-      ykeys: ['weight'],
-      labels: ['体重'],
+      ykeys: ['lineA','lineB'],
+      labels: ['LineA','LineB'],
       lineWidth : 2,
       pointSize : 3,
-      postUnits: 'kg',
-      ymax : 90,
-      ymin : 50,
-      goals: ['70','60'],
-      goalLineColors: ['#F11779'],
+      ymax : 230,
+      ymin : 123,
       smooth : true,
       hideHover : true,
-      resize: true,
     }
   );
 </script>
