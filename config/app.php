@@ -65,7 +65,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+//    'timezone' => 'UTC',
+    'timezone' => 'Asia/Tokyo',
 
     /*
     |--------------------------------------------------------------------------
@@ -78,7 +79,8 @@ return [
     |
     */
 
-    'locale' => 'en',
+//    'locale' => 'en',
+    'locale' => 'ja',
 
     /*
     |--------------------------------------------------------------------------
@@ -210,5 +212,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
+
+    'mediaPATH' => env('MEDIA_PATH'),
 
 ];

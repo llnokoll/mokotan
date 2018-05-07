@@ -14,3 +14,13 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/hello', 'HelloController@hello');
+//84937593
+//7583750503
+//73820575
+Route::get('/weight/{uid}/input', 'WeightInputController@weightinput');
+Route::post('/weight/output', 'WeightInputController@weightoutput');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
